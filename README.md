@@ -3,11 +3,11 @@ Acquiring MoSeq data using Kinect Azure. This package is a simple CLI tool that 
 
 # Installation
 
-## Step 0: Install Ubuntu 18.04 on your acquisiton machine
-Currently Ubuntu 18.04 is the only supported distribution listed in the [official installation instruction](https://learn.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download#linux-installation-instructions). **Please click `Don't Upgrade` to decline when you are prompted to upgrade to a new version of Ubuntu.**
+## Step 0: Install Ubuntu 18.04 on your acquisition machine
+Currently, Ubuntu 18.04 is the only supported distribution listed in the [official installation instruction](https://learn.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download#linux-installation-instructions). **Please click `Don't Upgrade` to decline when you are prompted to upgrade to a new version of Ubuntu.**
 
 ## Step 1: Install `curl`
-`curl` is used to download necessary files in the installation process. You can skip this step is `curl` is already installed.
+`curl` is used to download necessary files in the installation process. You can skip this step if `curl` is already installed.
 
 Check if you have `curl` installed in the environment by running the following commands:
 ```
@@ -22,7 +22,7 @@ sudo apt install curl
 ```
 
 ## Step 2: Install `build-essential` and `ffmpeg`
-`build-essential` and `ffmpeg` are used to compile and write videos in the `azure_acquire` package. You can skip this step is `build-essential` and `ffmpeg` are already installed. When in doubt, install them.
+`build-essential` and `ffmpeg` are used to compile and write videos in the `azure_acquire` package. You can skip this step if `build-essential` and `ffmpeg` are already installed. When in doubt, install them.
 ```
 sudo apt install build-essential
 sudo apt install ffmpeg
@@ -53,23 +53,23 @@ Add `99-k4a.rules` to the udev rules to use Azure Kinect as non-root.
 wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules
 sudo mv 99-k4a.rules /etc/udev/rules.d/
 ```
-Disconnect and reconnect Azure Kinect device for the changes to be effective.
+Disconnect and reconnect the Azure Kinect device for the changes to be effective.
 
-## Step 6: Check if the set up runs correctly
+## Step 6: Check if the setup runs correctly
 Open Terminal and run the following command:
 `k4aviewer`
 
 <!---add k4aviwer images--->
 
 ## Step 7: Configure the camera setting
-1. Select the device from the drop down list
-2. Choose the device and note down the serial number. If you have multiple devices, place an object or wave you hand under the camera, click start to start test recording to figure out which serial number maps to which camera. After that, click stop to stop.
+1. Select the device from the drop-down list
+2. Choose the device and note down the serial number. If you have multiple devices, place an object or wave your hand under the camera, click start to start test recording to figure out which serial number maps to which camera. After that, click stop to stop.
 3. Select the device to configure and click Open device button to open the device.
 4. Check Enable Depth Camera stream and select NFOV (Near Field of View) Unbinned for Depth mode.
-5. [Recommended] Uncheck Enalbe color camera.
+5. [Recommended] Uncheck Enable color camera.
 6. Select 30 FPS for framerate.
 7. Click Save to save the settings.
-8. Click close device. You must close device before you exsit the program.
+8. Click Close device. You must close the device before you exit the program.
 
 ## Step 8: Install and configure `git`
 `git` is used to download the `azure_acquire` repository from GitHub.
@@ -122,7 +122,7 @@ Create a conda environment called `azure-acquire` with `python 3.8` by running:
 ```
 conda create -n azure-acquire python=3.8
 ```
-Activate the eonvironment by running:
+Activate the environment by running:
 ```
 conda activate azure-acquire
 ```
@@ -154,5 +154,9 @@ Options for the acquisition command:
 
 `session-name`: This field can be an indicator of the date, cohort, experimental condition and/or environment type.
 `subject-name`: This field can be an indicator of the rodent strain, sex, age and/or additional identifiers. The subject name should uniquely identify each mouse.
-`recording-length`: The length of the recording time. Default is 30 mins if this option is not specified. Alternatively, the option could be specified using `-t 20`.
+`recording-length`: The length of the recording time. The default is 30 mins if this option is not specified. Alternatively, the option could be specified using `-t 20`.
 `serial-number`: The device the session records from. The device serial number could be found using `k4aviewer`.
+
+
+# License
+MoSeq is freely available for academic use under a license provided by Harvard University. Please refer to the license file for details. If you are interested in using MoSeq for commercial purposes please contact Bob Datta directly at srdatta@hms.harvard.edu, who will put you in touch with the appropriate people in the Harvard Technology Transfer office.
