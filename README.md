@@ -1,5 +1,5 @@
 # azure-acquire
-Acquiring MoSeq data using Kinect Azure. This package is a simple CLI tool that facilitates acquiring data using Kinect Azure on an Ubuntu machine.
+Acquiring MoSeq data using Kinect Azure. This package is a simple CLI tool that facilitates acquiring data using Kinect Azure on an Ubuntu machine. To setup the acqusition apparatus please follow [the Kinect 2 depth camera setup](https://github.com/dattalab/kinect2-nidaq/wiki). **Please note that the recommended height for the Azure Kinect camera is 23.5 inches (59.6cm) from the depth camera to the bottom of the apparatus.**
 
 # Installation
 
