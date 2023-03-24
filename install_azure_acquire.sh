@@ -2,9 +2,12 @@
 
 set -e
 
+# Install miniconda
+curl -L https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o "$HOME/miniconda3_latest.sh"
+chmod +x $HOME/miniconda3_latest.sh
+$HOME/miniconda3_latest.sh
+
 # Install curl
-sudo apt update
-sudo apt upgrade
 sudo apt install curl
 
 # Install build-essential and ffmpeg
