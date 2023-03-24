@@ -23,6 +23,3 @@ sudo apt install k4a-tools=1.3.0
 # Finish the device setup
 wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules
 sudo mv 99-k4a.rules /etc/udev/rules.d/
-
-# Install git
-sudo apt install git
