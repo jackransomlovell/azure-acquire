@@ -24,6 +24,9 @@ setup(
     version=get_version('azure_acquire/__init__.py'),
     packages=find_packages(),
     platforms=['mac', 'unix'],
+    install_requires=['click', 'Sphinx', 'coverage', 'flake8', 'python-dotenv>=0.5.1',
+                      'opencv-python', 'numpy', 'matplotlib', 'jupyter', 'pathlib2', 
+                      'tqdm', 'pyk4a', 'jupyter'],
     python_requires='>=3.7',
     entry_points={'console_scripts': ['azure-acquire = azure_acquire.cli:record']}
 )
