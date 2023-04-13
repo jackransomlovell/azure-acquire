@@ -24,7 +24,7 @@ setup(
     version=get_version('azure_acquire/__init__.py'),
     packages=find_packages(),
     platforms=['mac', 'unix'],
-    install_requires=['click', 'opencv-python', 'numpy', 'pyk4a', 'jupyter'],
+    install_requires=['click', 'opencv-python', 'numpy', 'pyk4a'],
     python_requires='>=3.7',
     entry_points={'console_scripts': ['azure-acquire = azure_acquire.cli:record']}
 )
