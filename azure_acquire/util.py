@@ -239,12 +239,14 @@ def capture_from_azure(k4a, filename_prefix, recording_length, save_ir=True,
     finally:
         k4a.stop()
         system_timestamps = np.array(system_timestamps)
+        # change from microsecond to millisecond
+        device_timestamps = np.array(device_timestamps)/1000
         
         # np.save(filename_prefix+'.system_timestamps.npy',system_timestamps)
         # np.save(filename_prefix+'.device_timestamps.npy',device_timestamps)
         
-        np.savetxt(os.path.join(filename_prefix, 'depth_ts.txt'), system_timestamps, fmt = '%f')
-        np.savetxt(os.path.join(filename_prefix, 'device_ts.txt'),device_timestamps, fmt = '%f')
+        # np.savetxt(os.path.join(filename_prefix, 'system_ts.txt'), system_timestamps, fmt = '%f')
+        np.savetxt(os.path.join(filename_prefix, 'depth_ts.txt'),device_timestamps, fmt = '%f')
         print(' - Session Average Frame rate = ', round(len(system_timestamps) / (system_timestamps.max()-system_timestamps.min()), 2), 'fps')
 
         image_queue.put(tuple())
