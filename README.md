@@ -8,106 +8,14 @@ Acquiring MoSeq data using Kinect Azure. This package is a simple CLI tool that 
 ## Step 0: Install Ubuntu 18.04 on your acquisition machine
 Currently, Ubuntu 18.04 is the only supported distribution listed in the [official installation instruction](https://learn.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download#linux-installation-instructions). **Please click `Don't Upgrade` to decline when you are prompted to upgrade to a new version of Ubuntu.**
 
-## Step 1: Install `curl`
-`curl` is used to download necessary files in the installation process. You can skip this step if `curl` is already installed.
-
-Check if you have `curl` installed in the environment by running the following commands:
-```
-which curl
-```
-
-If you have `curl`, it should print out a path like `/usr/bin/curl` and you can go to the next step. Otherwise, you will see `curl not found`, and will need to install `curl` by running the following commands:
+## Step 1: Install `git`
 ```
 sudo apt update
 sudo apt upgrade
-sudo apt install curl
-```
-
-## Step 2: Install `build-essential` and `ffmpeg`
-`build-essential` and `ffmpeg` are used to compile and write videos in the `azure_acquire` package. You can skip this step if `build-essential` and `ffmpeg` are already installed. When in doubt, install them.
-```
-sudo apt install build-essential
-sudo apt install ffmpeg
-```
-
-## Step 3: Configure Microsoft's package repository
-```
-sudo apt-get update
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-sudo apt-add-repository https://packages.microsoft.com/ubuntu/18.04/prod
-```
-Find more information at the [official instruction](https://learn.microsoft.com/en-us/windows-server/administration/linux-package-repository-for-microsoft-software).
-
-## Step 4: Install Azure Kinect packages
-Install the Kinect Azure packages to control the Kinect Azure camera. The `k4a-tools` include [Azure Kinect viewer](https://learn.microsoft.com/en-us/azure/kinect-dk/azure-kinect-viewer), [Azure Kinect recorder](https://learn.microsoft.com/en-us/azure/kinect-dk/azure-kinect-recorder), and [Azure Kince firmware tool](https://learn.microsoft.com/en-us/azure/kinect-dk/azure-kinect-firmware-tool).
-
-```
-sudo apt install libk4a1.3-dev
-sudo apt install libk4abt1.0-dev
-sudo apt install k4a-tools=1.3.0
-```
-Find more information at the [official instruction](https://learn.microsoft.com/en-us/azure/kinect-dk/sensor-sdk-download#linux-installation-instructions). The version number for `libk4a` must match that of `k4a-tools` (in the case above the version number is `1.3`)
-
-## Step 5: Finish the device setup
-Add `99-k4a.rules` to the udev rules to use Azure Kinect as non-root.
-
-```
-wget https://raw.githubusercontent.com/microsoft/Azure-Kinect-Sensor-SDK/develop/scripts/99-k4a.rules
-sudo mv 99-k4a.rules /etc/udev/rules.d/
-```
-Disconnect and reconnect the Azure Kinect device for the changes to be effective.
-
-## Step 6: Check if the setup runs correctly
-Open Terminal and run the following command:
-`k4aviewer`
-
-<!---add k4aviwer images--->
-
-## Step 7: Configure the camera setting
-1. Select the device from the drop-down list
-2. Choose the device and note down the serial number. If you have multiple devices, place an object or wave your hand under the camera, click start to start test recording to figure out which serial number maps to which camera. After that, click stop to stop.
-3. Select the device to configure and click Open device button to open the device.
-4. Check Enable Depth Camera stream and select NFOV (Near Field of View) Unbinned for Depth mode.
-5. [Recommended] Uncheck Enable color camera.
-6. Select 30 FPS for framerate.
-7. Click Save to save the settings.
-8. Click Close device. You must close the device before you exit the program.
-
-## Step 8: Install and configure `git`
-`git` is used to download the `azure_acquire` repository from GitHub.
-
-Check if you have `git` installed in the environment by running the following commands:
-```bash
-which git
-```
-If you have `git`, it should print out a path like `/usr/bin/git` and you can go to the next step. Otherwise, you will see `git not found` and will need to install `git` by running the following commands:
-```bash
 sudo apt install git
 ```
 
-If the installation code block above fails, visit the [official documentation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git/) for more information and alternative ways of installing `git`.
-
-## Step 9: Install Anaconda/Miniconda
-Anaconda is a distribution of python and Miniconda is a minimal version of Anaconda. Conda is the package and virtual environment management component of Anaconda/Miniconda. It allows users to install python packages and set up virtual environments more reproducibly.
-
-Miniconda is sufficient for the MoSeq2 package suite because we don't need all the extra packages Anaconda provides. You can skip this step if Anaconda/Miniconda is already installed.
-
-Check if you have `conda` (the package manager in Anaconda/Miniconda program) installed in the environment by running the following commands:
-```bash
-conda info
-```
-
-If you have `conda`, it should print out information about your environment and you can go to the next step. Otherwise, you will see `conda not found` and will need to download and install `conda` by running the following commands:
-```bash
-curl -L https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -o "$HOME/miniconda3_latest.sh"
-chmod +x $HOME/miniconda3_latest.sh
-$HOME/miniconda3_latest.sh
-```
-We recommend that you say **yes** when the installation prompt asks if you want to initialize Miniconda3. If you decide to say no (not recommended) you can manually initialize conda by running `conda init`.
-
-:exclamation: :grey_exclamation: **STOP!** :exclamation: :grey_exclamation: You must restart the terminal before continuing. Close the window, open a new one and move on to step 4. Restarting the terminal allows the new conda and python packages to be accessible by the terminal. This is important for [step 6](#step-6-create-a-conda-environment-using-moseq2-envyaml) and beyond. 
-
-## Step 10: Clone (download) the `azure-acquire` repository
+## Step 2: Clone (download) the `azure-acquire` repository
 Clone `azure-acquire` repository from GitHub by running:
 ```bash
 git clone https://github.com/versey-sherry/azure-acquire.git
@@ -117,9 +25,20 @@ Navigate to the `azure-acquire` directory by running:
 cd azure-acquire
 ```
 
-## Step 11: Create a new Conda environment and installed relevant packages
-Please make sure you are in `azure-qcquire` directory for the following steps.
+## Step 3: Install the necessary packages by running the installation script
+```
+bash ./install_azure_acquire.sh
+```
 
+## Step 4: Restart Terminal for the changes to be effective
+
+## Step 5: Verify packages were installed correctly
+Connect the camera to the acquisition computer. If the camera was previously connected, disconnect and re-connect the camera. Then open Terminal and run the following command:
+`k4aviewer`
+
+<!---add k4aviwer images--->
+
+## Step 6: Create a new conda environment and install relevant packages
 Create a conda environment called `azure-acquire` with `python 3.8` by running:
 ```
 conda create -n azure-acquire python=3.8
@@ -127,10 +46,6 @@ conda create -n azure-acquire python=3.8
 Activate the environment by running:
 ```
 conda activate azure-acquire
-```
-Install the relevant package by running:
-```
-pip install -r requirements.txt
 ```
 Install this package by running:
 ```
