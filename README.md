@@ -18,7 +18,7 @@ sudo apt install git
 ## Step 2: Clone (download) the `azure-acquire` repository
 Clone `azure-acquire` repository from GitHub by running:
 ```bash
-git clone https://github.com/versey-sherry/azure-acquire.git
+git clone https://github.com/azure-acquire/azure-acquire.git
 ```
 Navigate to the `azure-acquire` directory by running:
 ```bash
