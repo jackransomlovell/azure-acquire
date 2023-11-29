@@ -18,7 +18,7 @@ sudo apt install git
 ## Step 2: Clone (download) the `azure-acquire` repository
 Clone `azure-acquire` repository from GitHub by running:
 ```bash
-git clone https://github.com/azure-acquire/azure-acquire.git
+git clone https://github.com/dattalab/azure-acquire.git
 ```
 Navigate to the `azure-acquire` directory by running:
 ```bash
@@ -75,7 +75,7 @@ azure-acquire --version
 ```
 Example acquisition command saving recording at `./data`:
 ```
-azure-acquire ./data --subject-name mouse1 --session-name saline --serial-number xxx -recording-length 20
+azure-acquire ./data --subject-name mouse1 --session-name saline --serial-number xxx --recording-length 20
 ```
 
 Options for the acquisition command:
