@@ -18,7 +18,7 @@ sudo apt install git
 ## Step 2: Clone (download) the `azure-acquire` repository
 Clone `azure-acquire` repository from GitHub by running:
 ```bash
-git clone https://github.com/azure-acquire/azure-acquire.git
+git clone https://github.com/dattalab/azure-acquire.git
 ```
 Navigate to the `azure-acquire` directory by running:
 ```bash
@@ -28,6 +28,17 @@ cd azure-acquire
 ## Step 3: Install the necessary packages by running the installation script
 ```
 bash ./install_azure_acquire.sh
+```
+
+### Additional notes for Ubuntu 22.04 (skip if you are using Ubuntu 18.04)
+Notes: Ubuntu 18.04 is the only official supported distribution but if you are unable to install Ubuntu 18.04 on your machine and you have Ubuntu 22.04 instead, you can install the necessary packages by running the following commands:
+```
+bash ./install_azure_acquire_linux22.sh
+```
+When the script is done running, please run the following commands to add paths to the neessary files for the CLI tool to run correctly:
+```
+find / -name libstdc++.so.6 2>/dev/null
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 ```
 
 ## Step 4: Restart Terminal for the changes to be effective
@@ -64,7 +75,7 @@ azure-acquire --version
 ```
 Example acquisition command saving recording at `./data`:
 ```
-azure-acquire ./data --subject-name mouse1 --session-name saline --serial-number xxx -recording-length 20
+azure-acquire ./data --subject-name mouse1 --session-name saline --serial-number xxx --recording-length 20
 ```
 
 Options for the acquisition command:
