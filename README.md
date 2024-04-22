@@ -30,6 +30,17 @@ cd azure-acquire
 bash ./install_azure_acquire.sh
 ```
 
+### Additional notes for Ubuntu 22.04 (skip if you are using Ubuntu 18.04)
+Notes: Ubuntu 18.04 is the only official supported distribution but if you are unable to install Ubuntu 18.04 on your machine and you have Ubuntu 22.04 instead, you can install the necessary packages by running the following commands:
+```
+bash ./install_azure_acquire_linux22.sh
+```
+When the script is done running, please run the following commands to add paths to the neessary files for the CLI tool to run correctly:
+```
+find / -name libstdc++.so.6 2>/dev/null
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
+```
+
 ## Step 4: Restart Terminal for the changes to be effective
 
 ## Step 5: Verify packages were installed correctly
