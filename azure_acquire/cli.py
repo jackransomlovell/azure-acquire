@@ -38,8 +38,9 @@ def record(base_dir, subject_name, session_name, save_ir, recording_length, seri
 
     # prompt users to input serial number when there are multiple devices
     from pyk4a import connected_device_count
-    if connected_device_count() > 1:
-        serial_number=input('Input the serial number of the recording device: ')
+    if serial_number is None:
+        if connected_device_count() > 1:
+            serial_number=input('Input the serial number of the recording device: ')
 
     start_recording_RT(base_dir=base_dir, subject_name = subject_name, session_name = session_name, 
                        recording_length = recording_length, serial_number=serial_number, save_ir = save_ir,
