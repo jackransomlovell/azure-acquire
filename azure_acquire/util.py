@@ -277,9 +277,9 @@ def capture_from_azure(
     try:
         while time.time() - start_time < recording_length:
             capture = k4a.get_capture()
-            
-            if capture.depth is None: 
-                print('Dropped frame')
+
+            if capture.depth is None:
+                print("Dropped frame")
                 continue
 
             system_timestamps.append(time.time())
@@ -389,7 +389,7 @@ def start_recording_RT(
 
     k4a_bottom = PyK4A(
         Config(
-            color_resolution=ColorResolution.RES_720P,
+            color_resolution=ColorResolution.OFF,
             depth_mode=DepthMode.NFOV_UNBINNED,
             synchronized_images_only=False,
             # wired_sync_mode=WiredSyncMode.MASTER
