@@ -277,16 +277,16 @@ def capture_from_azure(
     try:
         while time.time() - start_time < recording_length:
             capture = k4a.get_capture()
+            
+            if capture.depth is None: 
+                print('Dropped frame')
+                continue
 
             system_timestamps.append(time.time())
             device_timestamps.append(capture.depth_timestamp_usec)
 
             depth = capture.depth.astype(np.int16)
             ir = capture.ir.astype(np.uint16)
-
-            if depth is None:
-                print("Dropped frame")
-                continue
 
             image_queue.put((ir, depth))
             if display_frames and count % 2 == 0:
