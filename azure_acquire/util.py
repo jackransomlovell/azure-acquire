@@ -22,7 +22,7 @@ def find_device(serial_number):
         ValueError: no device with the serial number found
 
     Returns:
-        device_id (int): the id of the device  
+        device_id (int): the id of the device
     """
     for device_id in range(connected_device_count()):
         try:
@@ -34,7 +34,8 @@ def find_device(serial_number):
                 return device_id
         except:
             continue
-    raise ValueError(f'Device serial number {serial_number} not found')
+    raise ValueError(f"Device serial number {serial_number} not found")
+
 
 def display_images(display_queue):
     """
@@ -43,27 +44,42 @@ def display_images(display_queue):
     Args:
         display_queue (multiprocessing.queues.Queque): the data stream from the camera to be displayed
     """
-    while True: 
-        data = display_queue.get() 
-        if len(data)==0: 
+    while True:
+        data = display_queue.get()
+        if len(data) == 0:
             cv2.destroyAllWindows()
             break
         else:
             ir = data[0]
-            ir = np.clip(ir+100,160,5500)
-            ir = ((np.log(ir)-5)*70).astype(np.uint8)
+            ir = np.clip(ir + 100, 160, 5500)
+            ir = ((np.log(ir) - 5) * 70).astype(np.uint8)
 
-            cv2.imshow('ir',ir)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break 
+            cv2.imshow("ir", ir)
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                break
         # clear queue before next iteration
         while True:
-            try: display_queue.get_nowait()
-            except: break
+            try:
+                display_queue.get_nowait()
+            except:
+                break
 
-def write_frames(filename, frames, threads=6, fps=30, crf=10,
-                 pixel_format='gray8', codec='h264', close_pipe=True,
-                 pipe=None, slices=24, slicecrc=1, frame_size=None, get_cmd=False):
+
+def write_frames(
+    filename,
+    frames,
+    threads=6,
+    fps=30,
+    crf=10,
+    pixel_format="gray8",
+    codec="h264",
+    close_pipe=True,
+    pipe=None,
+    slices=24,
+    slicecrc=1,
+    frame_size=None,
+    get_cmd=False,
+):
     """
     Write frames to avi file using the ffv1 lossless encoder
 
@@ -85,46 +101,61 @@ def write_frames(filename, frames, threads=6, fps=30, crf=10,
     Returns:
         pipe (subprocess.pipe, optional): ffmpeg pipe for writing the video.
     """
- 
+
     # we probably want to include a warning about multiples of 32 for videos
     # (then we can use pyav and some speedier tools)
 
     if not frame_size and type(frames) is np.ndarray:
-        frame_size = '{0:d}x{1:d}'.format(frames.shape[2], frames.shape[1])
+        frame_size = "{0:d}x{1:d}".format(frames.shape[2], frames.shape[1])
 
-    command = ['ffmpeg',
-               '-y',
-               '-loglevel', 'fatal',
-               '-framerate', str(fps),
-               '-f', 'rawvideo',
-               '-s', frame_size,
-               '-pix_fmt', pixel_format,
-               '-i', '-',
-               '-an',
-               '-crf',str(crf),
-               '-vcodec', codec,
-               '-preset', 'ultrafast',
-               '-threads', str(threads),
-               '-slices', str(slices),
-               '-slicecrc', str(slicecrc),
-               '-r', str(fps),
-               filename]
+    command = [
+        "ffmpeg",
+        "-y",
+        "-loglevel",
+        "fatal",
+        "-framerate",
+        str(fps),
+        "-f",
+        "rawvideo",
+        "-s",
+        frame_size,
+        "-pix_fmt",
+        pixel_format,
+        "-i",
+        "-",
+        "-an",
+        "-crf",
+        str(crf),
+        "-vcodec",
+        codec,
+        "-preset",
+        "ultrafast",
+        "-threads",
+        str(threads),
+        "-slices",
+        str(slices),
+        "-slicecrc",
+        str(slicecrc),
+        "-r",
+        str(fps),
+        filename,
+    ]
 
     if get_cmd:
         return command
 
     if not pipe:
-        pipe = subprocess.Popen(
-            command, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        pipe = subprocess.Popen(command, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
     for i in range(frames.shape[0]):
-        pipe.stdin.write(frames[i,:,:].tobytes())
+        pipe.stdin.write(frames[i, :, :].tobytes())
 
     if close_pipe:
         pipe.stdin.close()
         return None
     else:
         return pipe
+
 
 def write_images(image_queue, filename_prefix, save_ir=True):
     """
@@ -136,24 +167,45 @@ def write_images(image_queue, filename_prefix, save_ir=True):
     """
     depth_pipe = None
     if save_ir:
-        ir_pipe = None 
-    
-    while True: 
-        data = image_queue.get() 
-        if len(data)==0: 
+        ir_pipe = None
+
+    while True:
+        data = image_queue.get()
+        if len(data) == 0:
             depth_pipe.stdin.close()
             if save_ir:
                 ir_pipe.stdin.close()
             break
         else:
-            ir,depth = data
-            depth_pipe = write_frames(os.path.join(filename_prefix, 'depth.avi'), depth.astype(np.uint16)[None,:,:], codec='ffv1', close_pipe=False, pipe=depth_pipe, pixel_format='gray16')
+            ir, depth = data
+            depth_pipe = write_frames(
+                os.path.join(filename_prefix, "depth.avi"),
+                depth.astype(np.uint16)[None, :, :],
+                codec="ffv1",
+                close_pipe=False,
+                pipe=depth_pipe,
+                pixel_format="gray16",
+            )
             if save_ir:
-                ir_pipe = write_frames(os.path.join(filename_prefix, 'ir.avi'), ir.astype(np.uint16)[None,:,:], close_pipe=False, codec='ffv1', pipe=ir_pipe, pixel_format='gray16')
+                ir_pipe = write_frames(
+                    os.path.join(filename_prefix, "ir.avi"),
+                    ir.astype(np.uint16)[None, :, :],
+                    close_pipe=False,
+                    codec="ffv1",
+                    pipe=ir_pipe,
+                    pixel_format="gray16",
+                )
+
 
 # add camera related stuff here
-def write_metadata(filename_prefix, subject_name, session_name, 
-                   depth_resolution=[640, 576], little_endian=True, color_resolution=[640, 576]):
+def write_metadata(
+    filename_prefix,
+    subject_name,
+    session_name,
+    depth_resolution=[640, 576],
+    little_endian=True,
+    color_resolution=[640, 576],
+):
     """
     write recording metadata as json file.
 
@@ -165,20 +217,32 @@ def write_metadata(filename_prefix, subject_name, session_name,
         little_endian (bool, optional): boolean flag that indicates if depth data is little endian. Defaults to True.
         color_resolution (list, optional): frame resolution of ir video. Defaults to [640, 576].
     """
-    
-    # construct metadata dictionary
-    metadata_dict = {"SubjectName": subject_name, 'SessionName': session_name,
-                     "DepthResolution": depth_resolution, "IsLittleEndian": little_endian,
-                     "ColorResolution": color_resolution, "StartTime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}
-    
-    metadata_name = os.path.join(filename_prefix, 'metadata.json')
 
-    with open(metadata_name, 'w') as output:
+    # construct metadata dictionary
+    metadata_dict = {
+        "SubjectName": subject_name,
+        "SessionName": session_name,
+        "DepthResolution": depth_resolution,
+        "IsLittleEndian": little_endian,
+        "ColorResolution": color_resolution,
+        "StartTime": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+    }
+
+    metadata_name = os.path.join(filename_prefix, "metadata.json")
+
+    with open(metadata_name, "w") as output:
         json.dump(metadata_dict, output)
-            
-def capture_from_azure(k4a, filename_prefix, recording_length, save_ir=True,
-                       display_frames=False, display_time=False, 
-                       realtime_queue=None):
+
+
+def capture_from_azure(
+    k4a,
+    filename_prefix,
+    recording_length,
+    save_ir=True,
+    display_frames=False,
+    display_time=False,
+    realtime_queue=None,
+):
     """
     Capture depth and color videos from Kinect Azure
 
@@ -190,59 +254,90 @@ def capture_from_azure(k4a, filename_prefix, recording_length, save_ir=True,
         display_time (bool, optional): boolean flag that indicates whether to display time. Defaults to False.
         realtime_queue (_type_, optional): _description_. Defaults to None.
     """
-    camera_name = filename_prefix.split('.')[-1]
+    camera_name = filename_prefix.split(".")[-1]
     image_queue = Queue()
-    write_process = Process(target=write_images, args=(image_queue, filename_prefix), kwargs={'save_ir': save_ir})
+    write_process = Process(
+        target=write_images,
+        args=(image_queue, filename_prefix),
+        kwargs={"save_ir": save_ir},
+    )
     write_process.start()
-    
-    if display_frames: 
+
+    if display_frames:
         display_queue = Queue()
         display_process = Process(target=display_images, args=(display_queue,))
         display_process.start()
-        
+
     k4a.start()
     system_timestamps = []
     device_timestamps = []
     start_time = time.time()
     count = 0
-    
+
     try:
-        while time.time()-start_time < recording_length:  
+        while time.time() - start_time < recording_length:
             capture = k4a.get_capture()
-            if capture.depth is None: 
-                print('Dropped frame')
+
+            if capture.depth is None:
+                print("Dropped frame")
                 continue
-            
+
             system_timestamps.append(time.time())
             device_timestamps.append(capture.depth_timestamp_usec)
 
             depth = capture.depth.astype(np.int16)
             ir = capture.ir.astype(np.uint16)
 
-            image_queue.put((ir,depth))
-            if display_frames and count % 2 == 0: 
-                display_queue.put((ir[::2,::2],))
-                
-            if realtime_queue is not None and count%3==0:
-                realtime_queue.put((ir,camera_name))
+            image_queue.put((ir, depth))
+            if display_frames and count % 2 == 0:
+                display_queue.put((ir[::2, ::2],))
+
+            if realtime_queue is not None and count % 3 == 0:
+                realtime_queue.put((ir, camera_name))
 
             if count > 0:
-                if display_time and count % 15: 
+                if display_time and count % 15:
                     # sys.stdout.write('\rRecorded '+repr(int(time.time()-start_time))+' out of '+repr(recording_length)+' seconds')
-                    sys.stdout.write('\rRecorded '+repr(int(time.time()-start_time))+' out of '+repr(recording_length)+' seconds '+
-                                    '- Current Frame rate '+ str(round(len(system_timestamps) / (max(system_timestamps)-min(system_timestamps)), 2))+' fps')
+                    sys.stdout.write(
+                        "\rRecorded "
+                        + repr(int(time.time() - start_time))
+                        + " out of "
+                        + repr(recording_length)
+                        + " seconds "
+                        + "- Current Frame rate "
+                        + str(
+                            round(
+                                len(system_timestamps)
+                                / (max(system_timestamps) - min(system_timestamps)),
+                                2,
+                            )
+                        )
+                        + " fps"
+                    )
             count += 1
-            
+
     except OSError:
-        print('Recording stopped early')
-        
+        print("Recording stopped early")
+
     finally:
         k4a.stop()
         # change from microsecond to millisecond
-        device_timestamps = np.array(device_timestamps)/1000
-        
-        np.savetxt(os.path.join(filename_prefix, 'depth_ts.txt'),device_timestamps, fmt = '%f')
-        print(' - Session Average Frame rate = ', str(round(len(system_timestamps) / (max(system_timestamps)-min(system_timestamps)), 2))+' fps')
+        device_timestamps = np.array(device_timestamps) / 1000
+
+        np.savetxt(
+            os.path.join(filename_prefix, "depth_ts.txt"), device_timestamps, fmt="%f"
+        )
+        print(
+            " - Session Average Frame rate = ",
+            str(
+                round(
+                    len(system_timestamps)
+                    / (max(system_timestamps) - min(system_timestamps)),
+                    2,
+                )
+            )
+            + " fps",
+        )
 
         image_queue.put(tuple())
         write_process.join()
@@ -250,12 +345,21 @@ def capture_from_azure(k4a, filename_prefix, recording_length, save_ir=True,
         if display_frames:
             display_queue.put(tuple())
             display_process.join()
-            
-        if realtime_queue is not None:
-            realtime_queue.put(tuple())      
 
-def start_recording_RT(base_dir, subject_name, session_name, recording_length, 
-                       serial_number=None, save_ir = True, display_frames = True, display_time = True):
+        if realtime_queue is not None:
+            realtime_queue.put(tuple())
+
+
+def start_recording_RT(
+    base_dir,
+    subject_name,
+    session_name,
+    recording_length,
+    serial_number=None,
+    save_ir=True,
+    display_frames=True,
+    display_time=True,
+):
     """
     start recording data on Kinect Azure.
 
@@ -266,10 +370,12 @@ def start_recording_RT(base_dir, subject_name, session_name, recording_length,
         recording_length (int): recording time in seconds.
         device_id (int, optional): camera id number if there are multiple cameras. Defaults to 0.
     """
-    filename_prefix = os.path.join(base_dir,'session_' + datetime.now().strftime("%Y%m%d%H%M%S"))
+    filename_prefix = os.path.join(
+        base_dir, "session_" + datetime.now().strftime("%Y%m%d%H%M%S")
+    )
 
     os.makedirs(filename_prefix, exist_ok=True)
-    
+
     # write recording metadata
     write_metadata(filename_prefix, subject_name, session_name)
 
@@ -281,19 +387,29 @@ def start_recording_RT(base_dir, subject_name, session_name, recording_length,
         # assume there is only one device when there is no serial number input
         device_id = 0
 
-    k4a_bottom = PyK4A(Config(color_resolution=ColorResolution.RES_720P,
-                          depth_mode=DepthMode.NFOV_UNBINNED,
-                          synchronized_images_only=False,
-                          #wired_sync_mode=WiredSyncMode.MASTER
-		), device_id=device_id)
-                     
-    p_bottom = Process(target=capture_from_azure, 
-                       args=(k4a_bottom, filename_prefix , recording_length),
-                       kwargs={'save_ir': save_ir, 'display_frames': display_frames, 'display_time':display_time})
+    k4a_bottom = PyK4A(
+        Config(
+            color_resolution=ColorResolution.OFF,
+            depth_mode=DepthMode.NFOV_UNBINNED,
+            synchronized_images_only=False,
+            # wired_sync_mode=WiredSyncMode.MASTER
+        ),
+        device_id=device_id,
+    )
+
+    p_bottom = Process(
+        target=capture_from_azure,
+        args=(k4a_bottom, filename_prefix, recording_length),
+        kwargs={
+            "save_ir": save_ir,
+            "display_frames": display_frames,
+            "display_time": display_time,
+        },
+    )
 
     p_bottom.start()
-   
-    
+
+
 def save_camera_params(prefix, bottom_device_id=0, top_device_id=1):
     """
     save parameters for the cameras.
@@ -303,25 +419,31 @@ def save_camera_params(prefix, bottom_device_id=0, top_device_id=1):
         bottom_device_id (int, optional): camera id number for bottom camera if there are multiple cameras. Defaults to 0.
         top_device_id (int, optional): camera id number for top camera if there are multiple cameras. Defaults to 1.
     """
-    k4a_bottom = PyK4A(Config(color_resolution=ColorResolution.RES_720P,
-                              depth_mode=DepthMode.NFOV_UNBINNED,
-                              synchronized_images_only=False,
-                              wired_sync_mode=WiredSyncMode.MASTER), device_id=bottom_device_id)
+    k4a_bottom = PyK4A(
+        Config(
+            color_resolution=ColorResolution.RES_720P,
+            depth_mode=DepthMode.NFOV_UNBINNED,
+            synchronized_images_only=False,
+            wired_sync_mode=WiredSyncMode.MASTER,
+        ),
+        device_id=bottom_device_id,
+    )
 
-    k4a_top    = PyK4A(Config(color_resolution=ColorResolution.OFF,
-                              depth_mode=DepthMode.NFOV_UNBINNED,
-                              synchronized_images_only=False,
-                              wired_sync_mode=WiredSyncMode.SUBORDINATE,
-                              subordinate_delay_off_master_usec=640), device_id=top_device_id)
-
+    k4a_top = PyK4A(
+        Config(
+            color_resolution=ColorResolution.OFF,
+            depth_mode=DepthMode.NFOV_UNBINNED,
+            synchronized_images_only=False,
+            wired_sync_mode=WiredSyncMode.SUBORDINATE,
+            subordinate_delay_off_master_usec=640,
+        ),
+        device_id=top_device_id,
+    )
 
     k4a_top.start()
     k4a_bottom.start()
     time.sleep(1)
-    k4a_bottom.save_calibration_json(prefix+'.bottom.json')
-    k4a_top.save_calibration_json(prefix+'.top.json')
+    k4a_bottom.save_calibration_json(prefix + ".bottom.json")
+    k4a_top.save_calibration_json(prefix + ".top.json")
     k4a_top.stobp()
     k4a_bottom.stop()
-
-    
-
