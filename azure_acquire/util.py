@@ -392,7 +392,7 @@ def start_recording_RT(
             color_resolution=ColorResolution.OFF,
             depth_mode=DepthMode.NFOV_UNBINNED,
             synchronized_images_only=False,
-            # wired_sync_mode=WiredSyncMode.MASTER
+            wired_sync_mode=WiredSyncMode.SUBORDINATE
         ),
         device_id=device_id,
     )
