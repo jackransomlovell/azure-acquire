@@ -391,13 +391,13 @@ def start_recording_RT(
 
     # get sync mode
     sync_dict = {
-        "master": WiredSyncMode.MASTER,
+        "standalone": WiredSyncMode.STANDALONE,
         "subordinate": WiredSyncMode.SUBORDINATE,
     }
 
     if sync_mode not in sync_dict:
         raise ValueError(
-            "Invalid sync mode. Choose between 'master' and 'subordinate'."
+            "Invalid sync mode. Choose between 'standalone' and 'subordinate'."
         )
 
     wired_sync_mode = sync_dict[sync_mode]
